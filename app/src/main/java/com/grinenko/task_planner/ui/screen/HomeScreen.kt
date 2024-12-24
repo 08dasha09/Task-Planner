@@ -1,11 +1,11 @@
 package com.grinenko.task_planner.ui.screen
 
+import android.app.DatePickerDialog
+import android.icu.util.Calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -53,6 +54,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun ToDoMain(
     viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onThemeClick: () -> Unit = {}
@@ -61,6 +63,20 @@ fun ToDoMain(
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     val homeUiState by viewModel.homeUiState.collectAsState()
+
+    var selectedDate by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            selectedDate = "$year-${month + 1}-$dayOfMonth"
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
 
     Scaffold(
         topBar = {
@@ -96,7 +112,6 @@ fun ToDoMain(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     var description by remember { mutableStateOf("") }
-                    var dueDate by remember { mutableStateOf("") }
                     var priority by remember { mutableIntStateOf(1) }
 
                     OutlinedTextField(
@@ -126,11 +141,15 @@ fun ToDoMain(
                     )
 
                     OutlinedTextField(
-                        value = dueDate,
-                        onValueChange = { dueDate = it },
-                        label = { Text("Due Date (YYYY-MM-DD)") },
+                        value = selectedDate,
+                        onValueChange = { },
+                        label = { Text("Date") },
                         modifier = Modifier.fillMaxWidth(),
-                        maxLines = 1
+                        trailingIcon = {
+                            IconButton(onClick = { datePickerDialog.show() }) {
+                                Icon(painter = painterResource(id = R.drawable._47310), contentDescription = "Pick Date")
+                            }
+                        }
                     )
 
                     OutlinedTextField(
@@ -148,7 +167,7 @@ fun ToDoMain(
                                     Tasks(
                                         taskName = text,
                                         description = description,
-                                        date = dueDate,
+                                        date = selectedDate,
                                         priority = priority
                                     )
                                 )
@@ -166,9 +185,9 @@ fun ToDoMain(
             }
             text = ""
         }
-
     }
 }
+
 
 @Composable
 fun TopAppBarLayout(onThemeClick: () -> Unit) {
