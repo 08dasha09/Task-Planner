@@ -24,16 +24,18 @@ class HomeScreenViewModel(private val tasksRepository: TasksRepository): ViewMod
     )
 
     suspend fun addTasks(task: Tasks){
-             tasksRepository.insert(task)
+        tasksRepository.insert(task)
     }
 
     suspend fun deleteTasks(task: Tasks){
         tasksRepository.delete(task)
     }
 
-
-
+    suspend fun updateTask(updatedTask: Tasks) {
+        tasksRepository.update(updatedTask)
+    }
 }
+
 
 data class HomeUiState(
     val tasksList: List<Tasks> = listOf()

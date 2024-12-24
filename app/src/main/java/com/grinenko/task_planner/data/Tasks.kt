@@ -9,5 +9,5 @@
         val taskName: String,
         val description: String,
         val date: String,
-        val priority: Int // 0 - low, 1 - medium, 2 - height
+        val priority: Int // 1 - low, 2 - medium, 3 - height
     )
