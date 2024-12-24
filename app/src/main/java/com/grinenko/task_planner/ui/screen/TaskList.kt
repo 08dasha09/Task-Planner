@@ -77,7 +77,7 @@ fun TaskItem(task: Tasks, viewModel: HomeScreenViewModel = viewModel(factory = A
 
             if (isExpanded) {
                 Text(
-                    text = task.taskName,
+                    text = "Name: ${task.taskName}",
                     modifier = Modifier
                         .padding(start = 16.dp, top = 4.dp, end = 16.dp)
                         .align(Alignment.CenterHorizontally)
@@ -86,6 +86,21 @@ fun TaskItem(task: Tasks, viewModel: HomeScreenViewModel = viewModel(factory = A
                     style = MaterialTheme.typography.bodyLarge,
                     textDecoration = if (isChecked) TextDecoration.LineThrough else null,
                     color = if (isChecked) Color.Red else Color.Black
+                )
+                Text(
+                    text = "Description: ${task.description}",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+                Text(
+                    text = "Date: ${task.date}",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+                Text(
+                    text = "Priority: ${task.priority}",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp)
                 )
             }
         }
@@ -96,5 +111,5 @@ fun TaskItem(task: Tasks, viewModel: HomeScreenViewModel = viewModel(factory = A
 @Preview(showBackground = true)
 @Composable
 fun TaskItemPreview() {
-    TaskItem(Tasks(1,"Develop Project"))
+    TaskItem(Tasks(1,"Develop Project", "Description", "12/12/2024", 1))
 }

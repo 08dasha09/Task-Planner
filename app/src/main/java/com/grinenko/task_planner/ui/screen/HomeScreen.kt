@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -93,44 +94,79 @@ fun ToDoMain(
                 onDismissRequest = { showBottomSheet = false },
                 modifier = Modifier.wrapContentSize()
             ) {
-                Column(modifier = Modifier.height(IntrinsicSize.Min)) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    var description by remember { mutableStateOf("") }
+                    var dueDate by remember { mutableStateOf("") }
+                    var priority by remember { mutableIntStateOf(1) }
+
                     OutlinedTextField(
                         value = text,
                         onValueChange = { text = it },
-                        label = { Text("Add a task") },
-                        modifier = Modifier.padding(start = 16.dp, bottom = 2.dp,end = 16.dp).fillMaxWidth(),
+                        label = { Text("Task Name") },
+                        modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent),
-                        maxLines = 5,
-                        trailingIcon = {
-                            IconButton(onClick = {
-                                coroutineScope.launch {
-                                    viewModel.addTasks(Tasks(taskName = text))
-                                    showBottomSheet = false
-                                }
-
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.upload),
-                                    contentDescription = "Done"
-                                )
-                            }
-                        },
+                            unfocusedBorderColor = Color.Transparent
+                        ),
+                        maxLines = 1,
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(id = R.drawable.check_box),
-                                contentDescription = "Done"
+                                contentDescription = "Task Name"
                             )
                         }
                     )
 
-                }
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        label = { Text("Description") },
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 2
+                    )
 
+                    OutlinedTextField(
+                        value = dueDate,
+                        onValueChange = { dueDate = it },
+                        label = { Text("Due Date (YYYY-MM-DD)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 1
+                    )
+
+                    OutlinedTextField(
+                        value = priority.toString(),
+                        onValueChange = { priority = it.toIntOrNull() ?: 1 },
+                        label = { Text("Priority (1-3)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 1
+                    )
+
+                    IconButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                viewModel.addTasks(
+                                    Tasks(
+                                        taskName = text,
+                                        description = description,
+                                        date = dueDate,
+                                        priority = priority
+                                    )
+                                )
+                                showBottomSheet = false
+                            }
+                        },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.upload),
+                            contentDescription = "Save Task"
+                        )
+                    }
+                }
             }
             text = ""
-
         }
+
     }
 }
 
